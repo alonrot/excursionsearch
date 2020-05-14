@@ -1,0 +1,11 @@
+*.pyc
+__pycache__/
+*/__pycache__/
+*.egg-info/
+xsearch/experiments/benchmarks/hart6D/
+xsearch/experiments/benchmarks/micha10D/
+xsearch/experiments/benchmarks/simple1D/
+notes_general.txt
+.DS_Store
+README_icml.md
+.add_lcs.log

@@ -1,0 +1,12 @@
+name: xsearch_env
+channels:
+  - defaults
+  - conda-forge
+  - pytorch
+  - gpytorch
+dependencies:
+  - python==3.6
+  - matplotlib
+  - botorch
+  - nlopt
+  - pyyaml

@@ -1,0 +1,86 @@
+# Configuration file for benchmark experiments
+# ============================================
+
+# True objective function:
+which_objective: "hart6D"
+# which_objective: "micha10D"
+
+toy_mode: True  # When set to False, the Michalewicz (10D) or Hartmann (6D) functions will be used. 
+                # When set to True, a synthetic 1D function will be used, and budget_failures and 
+                # NBOiters will be overridden to smaller values.
+
+# Parameters for XSF and XS
+# =========================
+# Total number of Bayesian optimization iterations:
+NBOiters: 100
+
+# Number of samples of the global minimum (see Sec. 3.1 and Sec. 3.2 in the paper):
+Nsamples_fmin: 20
+
+# Parameters for XSF
+# ==================
+decision_boundary: 0.5
+rho_safe: 0.99 # rho_risk is computed as 1.0-rho_safe
+
+# Maximum number of failures:
+budget_failures: 10
+
+# GP parameters
+# =============
+
+# Parameters of hyperprior for lengthscale of f(x)
+# ---------------------------
+# lengthscale_prior_type: "box" # Uniform prior distribution
+lengthscale_prior_type: "gamma" # Gamma prior distribution
+lengthscale_prior_par1_obj: 1.0 # alpha, concentration (Gamma)
+lengthscale_prior_par2_obj: 5.0 # beta, rate (Gamma)
+# lengthscale_prior_par1_obj: 0.01 # low (Uniform)
+# lengthscale_prior_par2_obj: 0.3 # high (Uniform)
+
+# Parameters of hyperprior for lengthscale of g(x)
+# ---------------------------
+lengthscale_prior_par1_cons: 1.0 # alpha, concentration (Gamma)
+lengthscale_prior_par2_cons: 5.0 # beta, rate (Gamma)
+# lengthscale_prior_par1_cons: 0.1 # low (Uniform)
+# lengthscale_prior_par2_cons: 0.3 # high (Uniform)
+
+# Parameters of hyperprior for outputscale of f(x)
+# ---------------------------
+outputscale_prior_type: "gaussian" 
+outputscale_prior_par1_obj: 0.50 # loc
+outputscale_prior_par2_obj: 0.25 # scale
+
+# Parameters of hyperprior for outputscale of g(x)
+# ---------------------------
+outputscale_prior_par1_cons: 0.25 # loc
+outputscale_prior_par2_cons: 0.1 # scale
+
+# Model noise f(x) (standard deviation) (fixed)
+noise_std_obj: 0.01
+
+# Model noise g(x) (standard deviation) (fixed)
+noise_std_cons: 0.01
+
+# Local optimization with random restarts
+# =======================================
+
+# Number of restarts
+# ------------------
+Nrestarts_safe: 10 # In XS, this parameter is used as the number of random restarts to optimize alpha(x); Nrestarts_risky is ignored
+Nrestarts_risky: 10 # Used only in XSF
+Nrestarts_eta: 10 # In XS, this parameter is used as the number of random restarts to compute min_x mu(x|D); Nrestarts_eta_c is ignored
+Nrestarts_eta_c: 10 # Used only in XSF
+
+# scipy optimizers for XSF
+# ------------------------
+method_safe: "L-BFGS-B" # Also used for XS
+method_risky: "L-BFGS-B"
+
+# Other options
+# =============
+disp_info_scipy_opti: False # Display info about the progress of the scipy optimizer
+
+# Toogle on/off plotting. Only has an effect when toy_mode = True
+plotting: True
+
+debug_mode: False # TODO: Remove this for the code sumission to avoid accidentally setting it to True
