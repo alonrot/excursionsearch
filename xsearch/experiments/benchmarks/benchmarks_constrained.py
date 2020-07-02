@@ -139,6 +139,17 @@ def run(rep_nr,which_algo):
         cfg_node["lengthscale_prior_par2_obj"] = 0.3
         cfg_node["lengthscale_prior_par1_cons"] = 0.01
         cfg_node["lengthscale_prior_par2_cons"] = 0.3
+    elif cfg_node["thesis_plot_mode"] == True:
+        cfg_node["which_objective"] = "simple1D"
+        cfg_node["NBOiters"] = 15
+        cfg_node["budget_failures"] = 3
+        cfg_node["Nrestarts_safe"] = 4
+        cfg_node["Nrestarts_risky"] = 4
+        cfg_node["lengthscale_prior_type"] = "box"
+        cfg_node["lengthscale_prior_par1_obj"] = 0.01
+        cfg_node["lengthscale_prior_par2_obj"] = 0.3
+        cfg_node["lengthscale_prior_par1_cons"] = 0.01
+        cfg_node["lengthscale_prior_par2_cons"] = 0.3
     else:
         cfg_node["plotting"] = False
 
@@ -176,6 +187,12 @@ def run(rep_nr,which_algo):
         axes_GPobj, axes_GPcons, axes_acqui, axes_fmin = plotting_tool_cons(gp_list[0],gp_list[1],acqui,axes_GPobj=None,axes_GPcons=None,axes_acqui=None,axes_fmin=None)
 
     # average over multiple trials
+    if cfg_node["thesis_plot_mode"] == True:
+        rho_t_vec = np.zeros(cfg_node["NBOiters"])
+        zk_t_vec = np.zeros(cfg_node["NBOiters"])
+        DeltaBt_vec = np.zeros(cfg_node["NBOiters"])
+        y_cons_vec = np.zeros(cfg_node["NBOiters"])
+    
     for trial in range(cfg_node["NBOiters"]):
         
         msg_bo_iters = " <<< BO Iteration {0:d} / {1:d} >>>".format(trial+1,cfg_node["NBOiters"])
@@ -187,6 +204,13 @@ def run(rep_nr,which_algo):
         # Get next point:
         acqui.update_remaining_iterations(n_iter=trial)
         xnext, alpha_next = acqui.get_next_point()
+
+        # Do this thing:
+        if cfg_node["thesis_plot_mode"] == True:
+            rho_t_vec[trial] = acqui.rho_t.item()
+            zk_t_vec[trial] = acqui.zk
+            DeltaBt_vec[trial] = acqui.DeltaBt.item()
+            y_cons_vec[trial] = gp_list[1].train_targets[-1].item()
 
         # Compute simple regret:
         regret_simple = acqui.get_simple_regret_cons(fmin_true=f_min)
@@ -226,6 +250,18 @@ def run(rep_nr,which_algo):
         
         # Update the model in other classes:
         del(acqui); acqui = AcquiFun(model_list=gp_list, options=cfg_node)
+
+    if cfg_node["thesis_plot_mode"] == True:
+        path2save = "/Users/alonrot/MPI/WIP_papers/phd_thesis/oral_defense/wip/pics/code/XSF_expla/rho_t.pickle"
+        import pickle
+        rho_t_dict = dict(  rho_t_vec=rho_t_vec,
+                            zk_t_vec=zk_t_vec,
+                            DeltaBt_vec=DeltaBt_vec,
+                            y_cons_vec=y_cons_vec,
+                            readme="Saved from excursionsearch/xsearch/experiments/benchmarks/benchmarks_constrained.py")
+
+        with open(path2save, "wb") as fid:
+            pickle.dump(rho_t_dict, fid)
 
     node2write = convert_lists2arrays(logvars)
     node2write["n_rep"] = rep_nr

@@ -5,9 +5,11 @@
 which_objective: "hart6D"
 # which_objective: "micha10D"
 
-toy_mode: True  # When set to False, the Michalewicz (10D) or Hartmann (6D) functions will be used. 
+toy_mode: False  # When set to False, the Michalewicz (10D) or Hartmann (6D) functions will be used. 
                 # When set to True, a synthetic 1D function will be used, and budget_failures and 
                 # NBOiters will be overridden to smaller values.
+
+thesis_plot_mode: True
 
 # Parameters for XSF and XS
 # =========================
